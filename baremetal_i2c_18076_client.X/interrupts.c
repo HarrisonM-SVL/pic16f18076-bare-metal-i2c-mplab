@@ -11,7 +11,7 @@ void initInterrupts(void)
 
 void __interrupt() ISR(void)
 {
-    if ((PIR3bits.SSP1IF) || (PIR3bits.BCL1IF))
+    if ((PIR1bits.SSP1IF) || (PIR2bits.BCL1IF))
     {        
         //Call I2C Handler
         _MSSP_ProcessInterrupt();

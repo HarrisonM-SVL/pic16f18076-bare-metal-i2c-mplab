@@ -38,17 +38,17 @@ static void (*I2CStopHandler) (void) = NULL;
 
 void initI2CPins(void)
 {
-    //RB4 = SDA, RB6 = SCL
-    TRISCbits.TRISC4 = 0b1;
-    TRISCbits.TRISC3 = 0b1;
+    //TRISC0 = RC0 = SCL, TRISC1 = RC1 = SDA
+    TRISCbits.TRISC0 = 0b1;
+    TRISCbits.TRISC1 = 0b1;
     
     //Disable analog mode
-    ANSELCbits.ANSC4 = 0b0;
+    //ANSELCbits.ANSC4 = 0b0;
     ANSELCbits.ANSC3 = 0b0;
     
-    //Enable Open-Drain Outputs
-    ODCONCbits.ODCC4 = 0b1;
-    ODCONCbits.ODCC3 = 0b1;
+//    //Enable Open-Drain Outputs
+//    ODCONCbits.ODCC4 = 0b1;
+//    ODCONCbits.ODCC3 = 0b1;
     
 #ifdef USE_INTERNAL_PULLUPS
     
@@ -60,12 +60,12 @@ void initI2CPins(void)
     
 #endif
     
-    //PPS Settings
-    RC4PPS = 0x16; 
-    RC3PPS = 0x15;
-    
-    SSP1DATPPS = 0b010100;
-    SSP1CLKPPS = 0b010011;
+//    //PPS Settings
+//    RC4PPS = 0x16; 
+//    RC3PPS = 0x15;
+//    
+//    SSP1DATPPS = 0b010100;
+//    SSP1CLKPPS = 0b010011;
 }
 
 void MSSP_ClientInit(uint8_t address)
@@ -95,16 +95,16 @@ void MSSP_ClientInit(uint8_t address)
     SSP1ADD = (address << 1);
     
     //Clear Bus Collision interrupt flag
-    PIR3bits.BCL1IF = 0;
+    PIR2bits.BCL1IF = 0;
     
     //Clear the SSP interrupt flag
-    PIR3bits.SSP1IF = 0;
+    PIR1bits.SSP1IF = 0;
     
     //Enable BCLIF
-    PIE3bits.BCL1IE = 1;
+    PIE2bits.BCL1IE = 1;
     
     //Enable SSPIF
-    PIE3bits.SSP1IE = 1;
+    PIE1bits.SSP1IE = 1;
     
     //Enable the module
     SSP1CON1bits.SSPEN = 1;
@@ -113,7 +113,7 @@ void MSSP_ClientInit(uint8_t address)
 void _MSSP_ProcessInterrupt(void)
 {
     //Check for SSPIF
-    if(PIR3bits.SSP1IF)                                                         
+    if(PIR1bits.SSP1IF)                                                         
     {
         if (SSP1STATbits.P)
         {
@@ -166,20 +166,20 @@ void _MSSP_ProcessInterrupt(void)
             }
         }
     }
-    if(PIR3bits.BCL1IF)
+    if(PIR2bits.BCL1IF)
     {
         //Clear the Buffer Full (BF) flag
         temp = SSP1BUF;
         
         // Clear BCLIF
-        PIR3bits.BCL1IF = 0;
+        PIR2bits.BCL1IF = 0;
     }
     
     //Release Clock Stretch
     SSP1CON1bits.CKP = 1;
     
     //Clear SSP1IF
-    PIR3bits.SSP1IF = 0;
+    PIR1bits.SSP1IF = 0;
 }
 
 void assignMSSPByteWriteHandler(void (*writeHandler)(uint8_t))
