@@ -112,6 +112,7 @@ void MSSP_ClientInit(uint8_t address)
 
 void _MSSP_ProcessInterrupt(void)
 {
+    
     //Check for SSPIF
     if(PIR1bits.SSP1IF)                                                         
     {

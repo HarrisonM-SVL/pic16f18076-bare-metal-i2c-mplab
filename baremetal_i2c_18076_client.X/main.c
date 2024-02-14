@@ -68,11 +68,15 @@
 
 int buffer[4], out[4]; //'buffer' is an array to store each individual digit of the current reading
 
+volatile int state = 0;
 
 void main(void) {
     
     //Init the I2C Pins on the Device
     initI2CPins();
+    
+    // Set up pin as output for debugging
+    TRISC3 = 0;
     
     //Initialize the I2C Driver
     MSSP_ClientInit(0x60);
@@ -94,9 +98,17 @@ void main(void) {
     //Enable Interrupts
     initInterrupts();
     
+    
     while (1)
     {
         
+        
+        
+//        PORTCbits.RC3 = state;
+//        state = !state;
+//        buffer;
+        // Simple Delay Function
+//        for (uint16_t i = 0; i < 0xFFFF; i++) { ; }
     }
     
     return;

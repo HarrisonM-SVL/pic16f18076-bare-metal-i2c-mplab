@@ -96,17 +96,22 @@ inline bool startI2CRead(uint8_t addr)
 
 void initI2CPins(void)
 {
-    //RC4 = SDA, RC3 = SCL
-    TRISCbits.TRISC4 = 0b1;
-    TRISCbits.TRISC3 = 0b1;
+//    //RC4 = SDA, RC3 = SCL
+//    TRISCbits.TRISC4 = 0b1;
+//    TRISCbits.TRISC3 = 0b1;
+  
+    //TRISC0 = RC0 = SCL, TRISC1 = RC1 = SDA
+    TRISCbits.TRISC0 = 0b1;
+    TRISCbits.TRISC1 = 0b1;
+    
     
     //Disable analog mode
-    ANSELCbits.ANSC4 = 0b0;
+    //ANSELCbits.ANSC4 = 0b0;
     ANSELCbits.ANSC3 = 0b0;
     
-    //Enable Open-Drain Outputs
-    ODCONCbits.ODCC4 = 0b1;
-    ODCONCbits.ODCC3 = 0b1;
+//    //Enable Open-Drain Outputs
+//    ODCONCbits.ODCC4 = 0b1;
+//    ODCONCbits.ODCC3 = 0b1;
     
 #ifdef USE_INTERNAL_PULLUPS
     
@@ -118,12 +123,12 @@ void initI2CPins(void)
     
 #endif
     
-    //PPS Settings
-    RC4PPS = 0x16; 
-    RC3PPS = 0x15;
-    
-    SSP1DATPPS = 0b010100;
-    SSP1CLKPPS = 0b010011;
+//    //PPS Settings
+//    RC4PPS = 0x16; 
+//    RC3PPS = 0x15;
+//    
+//    SSP1DATPPS = 0b010100;
+//    SSP1CLKPPS = 0b010011;
 }
 
 void MSSP_HostInit(void) 
@@ -144,10 +149,10 @@ void MSSP_HostInit(void)
     SSP1ADD = 0x4F;                                                             
     
     // Clear the host interrupt flag
-    PIR3bits.SSP1IF = 0; //!!!Changed from PIR1
+    PIR1bits.SSP1IF = 0; //!!!Changed from PIR1
     
     // Disable the host interrupt
-    PIE3bits.SSP1IE = 0;
+    PIE1bits.SSP1IE = 0;
     
     // Enable the MSSP Peripheral
     SSP1CON1bits.SSPEN = 0b1; 

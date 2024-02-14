@@ -1,5 +1,6 @@
 #include "mssp1_blockData.h"
 
+#include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -14,8 +15,14 @@ static volatile uint8_t writeBufferSize = 0;
 static volatile uint8_t* readBuffer = 0;
 static volatile uint8_t readBufferSize = 0;
 
+
+volatile int state = 0;
+
+
 void _MSSP_StoreByte(uint8_t data)
 {
+//    PORTCbits.RC3 = state;
+//    state = !state;
 #ifdef FIRST_BYTE_ADDR                                                          // If set, treat the 1st byte as an index
     if (!isFirst)
     {
@@ -41,6 +48,8 @@ void _MSSP_StoreByte(uint8_t data)
 
 uint8_t _MSSP_RequestByte(void)
 {
+//    PORTCbits.RC3 = state;
+//    state = !state;
     wasRead = true;
     uint8_t data = 0x00;
     if (i2c_index < readBufferSize)
@@ -53,11 +62,14 @@ uint8_t _MSSP_RequestByte(void)
         //This line is to correct for the extra byte loaded, but not sent when stopped.
         i2c_index = readBufferSize + 1;
     }
+    
     return data;
 }
 
 void _onMSSPStop(void)
 {
+//    PORTCbits.RC3 = state;
+//    state = !state;
 #ifdef FIRST_BYTE_ADDR
     if ((wasRead) && (i2c_index != 0))
     {
